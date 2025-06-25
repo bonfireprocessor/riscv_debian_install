@@ -2,7 +2,7 @@
 set -e
 
 IMAGE=run/sdcard.img
-MOUNT_EFI=mnt/sdcard
+MOUNT_EFI=mnt/bootfs
 MOUNT_ROOT=mnt/rootfs
 LOOPDEV=""
 
