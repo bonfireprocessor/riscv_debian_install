@@ -2,7 +2,7 @@
 set -e
 
 MOUNT_ROOT=mnt/rootfs
-MOUNT_EFI=mnt/sdcard
+MOUNT_EFI=mnt/bootfs
 
 sudo mmdebstrap \
   --arch=riscv64 \
@@ -13,10 +13,12 @@ sudo mmdebstrap \
   http://deb.debian.org/debian
 
 #Execute setup script in chroot environment
-sudo cp riscv64_setup.sh $MOUNT_ROOT/tmp
-sudo chmod +x $MOUNT_ROOT/tmp/riscv64_setup.sh
-sudo chroot $MOUNT_ROOT /tmp/riscv64_setup.sh
-sudo rm $MOUNT_ROOT/tmp/riscv64_setup.sh
+sudo systemd-nspawn --machine=starfive  -D $MOUNT_ROOT --bind riscv64_setup.sh:/setup.sh setup.sh
+# Old Version: Using chroot
+#sudo cp riscv64_setup.sh $MOUNT_ROOT/tmp
+#sudo chmod +x $MOUNT_ROOT/tmp/riscv64_setup.sh
+#sudo chroot $MOUNT_ROOT /tmp/riscv64_setup.sh
+#sudo rm $MOUNT_ROOT/tmp/riscv64_setup.sh
 
 #Prepare EFI partition
 

@@ -4,4 +4,4 @@ set -e
 
 
 sudo apt update
-sudo apt install mmdebstrap qemu-user-static binfmt-support -y
+sudo apt install mmdebstrap qemu-user-static binfmt-support systemd-container -y

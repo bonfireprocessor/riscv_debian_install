@@ -1,12 +1,17 @@
 #!/bin/bash
+# This scriot is intended to be run in the chroot environment 
+
 set -euo pipefail
 apt update
 apt install linux-image-riscv64 u-boot-menu -y
 apt install network-manager sudo vim less man-db bash-completion tasksel  systemd-timesyncd rsync  wget binutils -y
 apt install  openssh-server net-tools htop usbutils git  build-essential linux-cpupower -y
 tasksel install standard
-apt install mc smartmontools -y
+apt install mc smartmontools git -y
 
+echo "Set Hostname to starfive"
+echo "starfive" > /etc/hostname
+#hostnamectl set-hostname starfive
 
 # create a default user if not exists
 if ! id -u debian >/dev/null 2>&1; then
