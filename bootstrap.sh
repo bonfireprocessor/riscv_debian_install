@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-MOUNT_ROOT=mnt/rootfs
-MOUNT_EFI=mnt/bootfs
-
+source "$(dirname "$0")/env.sh"
+ 
 sudo mmdebstrap \
   --arch=riscv64 \
   --variant=standard \
