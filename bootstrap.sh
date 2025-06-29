@@ -12,7 +12,7 @@ sudo mmdebstrap \
   http://deb.debian.org/debian
 
 #Execute setup script in chroot environment
-sudo systemd-nspawn --machine=starfive  -D $MOUNT_ROOT --bind riscv64_setup.sh:/setup.sh setup.sh
+sudo systemd-nspawn --machine=starfive  -D $MOUNT_ROOT --bind riscv64_setup.sh:/setup.sh /setup.sh
 # Old Version: Using chroot
 #sudo cp riscv64_setup.sh $MOUNT_ROOT/tmp
 #sudo chmod +x $MOUNT_ROOT/tmp/riscv64_setup.sh

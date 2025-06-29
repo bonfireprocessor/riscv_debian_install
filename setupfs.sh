@@ -23,8 +23,8 @@ if [ -f "$IMAGE" ]; then
     esac
 fi
 
-# Create a 16GB empty image file
-dd if=/dev/zero of=$IMAGE bs=1M count=16384
+# Create a 4GB empty image file
+dd if=/dev/zero of=$IMAGE bs=1M count=4096
 
 # 2. Partition the image using GPT
 parted $IMAGE --script mklabel gpt \

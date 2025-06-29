@@ -22,7 +22,7 @@ if [ ! -f "$IMAGE" ]; then
     exit 1
 fi
 
-qemu-system-riscv64 -nographic -machine virt -m 1.9G \
+qemu-system-riscv64 -nographic -machine virt -smp 4  -m 1.0G \
  -bios /usr/lib/riscv64-linux-gnu/opensbi/generic/fw_jump.elf \
  -kernel /usr/lib/u-boot/qemu-riscv64_smode/uboot.elf \
  -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 \

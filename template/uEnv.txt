@@ -9,5 +9,7 @@ ramdisk_addr_r=0x46100000
 boot_targets=distro mmc0 dhcp 
 # Fix wrong fdtfile name
 fdtfile=starfive/jh7110-starfive-visionfive-2-v1.3b.dtb
+# Set ftddir to because of missing Entries in extlinux.conf
+fdtdir=/dtbs/
 # Fix missing bootcmd
 bootcmd=run load_distro_uenv;run bootcmd_distro

@@ -13,6 +13,12 @@ echo "Set Hostname to starfive"
 echo "starfive" > /etc/hostname
 #hostnamectl set-hostname starfive
 
+#Fix waiting for resume device at boot
+echo "RESUME=none" | sudo tee /etc/initramfs-tools/conf.d/resume
+update-initramfs -u
+
+
+
 # create a default user if not exists
 if ! id -u debian >/dev/null 2>&1; then
     useradd -m -s /bin/bash debian
@@ -25,6 +31,7 @@ sed -i 's/^# *de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 update-locale LANG=de_DE.UTF-8
 
+#Copy DTB files for StarFive
 kernel_version=$(ls /lib/modules | sort -V | tail -n1)
 dtb_source="/usr/lib/linux-image-${kernel_version}/"
 dtb_target="/boot/dtbs"
