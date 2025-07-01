@@ -11,6 +11,16 @@ sudo mmdebstrap \
   $MOUNT_ROOT \
   http://deb.debian.org/debian
 
+
+# Copy various configuration files and scripts
+sudo cp -rv template/fstab $MOUNT_ROOT/etc/fstab
+sudo cp -rv  template/resize-rootfs.sh $MOUNT_ROOT/usr/local/bin
+sudo chmod +x $MOUNT_ROOT/usr/local/bin/resize-rootfs.sh
+sudo cp -rv template/resize-rootfs.service $MOUNT_ROOT/etc/systemd/system
+sudo cp -rv template/99-cpufreq.rules $MOUNT_ROOT/etc/udev/rules.d
+
+
+
 #Execute setup script in chroot environment
 sudo systemd-nspawn --machine=starfive  -D $MOUNT_ROOT --bind riscv64_setup.sh:/setup.sh /setup.sh
 # Old Version: Using chroot

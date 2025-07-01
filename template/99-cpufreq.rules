@@ -1,0 +1,1 @@
+SUBSYSTEM=="cpu", KERNEL=="cpu[0-9]*", ACTION=="add", RUN+="/bin/bash -c 'echo schedutil > /sys/devices/system/cpu/%k/cpufreq/scaling_governor'"

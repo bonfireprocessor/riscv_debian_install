@@ -1,0 +1,2 @@
+PARTLABEL=root   /         ext4    defaults        0       1
+PARTLABEL=ESP    /boot     vfat    defaults        0       2
