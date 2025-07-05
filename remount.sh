@@ -24,15 +24,15 @@ echo "  - Root (ext4) partition mounted at: $MOUNT_ROOT"
 echo "  - Loop device in use: $LOOPDEV"
 
 # Write cleanup commands to run/cleanfs.sh
-cat > run/cleanfs.sh <<EOF
+cat > run/umountfs.sh <<EOF
 #!/bin/bash
 sudo umount $MOUNT_EFI
 sudo umount $MOUNT_ROOT
 sudo losetup -d $LOOPDEV
 EOF
 
-chmod +x run/cleanfs.sh
+chmod +x run/umountfs.sh
 
 echo
 echo "  To unmount and detach, run:"
-echo "    ./run/cleanfs.sh"
+echo "    ./run/umountfs.sh"

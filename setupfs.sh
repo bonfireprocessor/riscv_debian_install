@@ -27,12 +27,12 @@ fi
 dd if=/dev/zero of=$IMAGE bs=1M count=4096
 
 # 2. Partition the image using GPT
-parted $IMAGE --script mklabel gpt \
-  mkpart BBL 4096s 8191s \
-  mkpart FSBL 8192s 16383s \
-  mkpart ESP fat32 16384s 630783s \
-  set 3 esp on \
-  mkpart root ext4 630784s 100%
+
+sgdisk -o $IMAGE \
+    -n 1:4096:8191    -c 1:"spl"   -t=1:2e54b353-1271-4842-806f-e436d6af6985 \
+    -n 2:8192:16383   -c 2:"uboot" -t=2:5b193300-fc78-40cd-8002-e86c45580b47  \
+    -n 3:16384:630783 -c 3:"ESP"   -t 3:ef00 \
+    -n 4:630784:0     -c 4:"root"  -t 4:8300
 
 # Set up loop device with partition scanning
 LOOPDEV=$(sudo losetup --find --partscan --show $IMAGE)

@@ -16,7 +16,7 @@ if [ $? -eq 0 ]; then
     echo "No change in partition size, skipping resize2fs and gdisk."
 else
     resize2fs "$PART" || exit 1
-    gdisk $DISK || exit 1
+    sgdisk -e $DISK || exit 1
 fi
 
 if [[ "$DISK" =~ ^/dev/vd ]]; then

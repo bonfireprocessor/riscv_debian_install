@@ -6,14 +6,15 @@
 
 set -e
 set -u
+
 source "$(dirname "$0")/env.sh"
 ROOT_PARTITION="/dev/vda4"  # root partition in the disk image
 
 echo "Starting QEMU with disk image: $IMAGE"
 
 # Prüfe, ob das IMAGE als Loop-Device gemountet ist
-if mount | grep -q $$MOUNT_ROOT; then
-    echo "Error: The disk image $IMAGE is mounted as a loop device. Please unmount it and try again."
+if losetup | grep -q $IMAGE; then
+    echo "Error: The disk image $IMAGE is mounted as a loop device. Please unmount with run/umountfs.sh it and try again."
     exit 1
 fi
 

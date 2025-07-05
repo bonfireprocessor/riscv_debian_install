@@ -7,7 +7,7 @@ apt install linux-image-riscv64 u-boot-menu -y
 apt install network-manager sudo vim less man-db bash-completion tasksel  systemd-timesyncd rsync  wget binutils -y
 apt install  openssh-server net-tools htop usbutils git  build-essential linux-cpupower -y
 tasksel install standard
-apt install mc smartmontools git libsensors5 libsensors-dev lm-sensors cloud-guest-utils  -y
+apt install mc smartmontools git libsensors5 libsensors-dev lm-sensors cloud-guest-utils gdisk   -y
 
 echo "Set Hostname to starfive"
 echo "starfive" > /etc/hostname
@@ -41,3 +41,8 @@ rm -rf "$dtb_target"
 mkdir -p "$dtb_target"
 mkdir -p "$dtb_target"/"$kernel_version"
 cp -rv "${dtb_source}"/starfive  "$dtb_target"/"$kernel_version"
+
+# Because updating the U-Boot confiugration and the boot partition is not reliable currently, we disable automatic updates of the kernel.
+# This is a workaround until the issue is resolved. 
+# You can later remove the hold with: sudo apt-mark unhold linux-image-riscv64
+apt-mark hold linux-image-riscv64

@@ -18,6 +18,7 @@ sudo cp -rv  template/resize-rootfs.sh $MOUNT_ROOT/usr/local/bin
 sudo chmod +x $MOUNT_ROOT/usr/local/bin/resize-rootfs.sh
 sudo cp -rv template/resize-rootfs.service $MOUNT_ROOT/etc/systemd/system
 sudo cp -rv template/99-cpufreq.rules $MOUNT_ROOT/etc/udev/rules.d
+sudo cp -rv template/u-boot $MOUNT_ROOT/etc/default
 
 
 
