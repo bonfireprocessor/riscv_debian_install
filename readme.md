@@ -1,6 +1,8 @@
 ## Debian Trixie Standard Installation for StarFive VisionFive 2 Board
 
-![VisionFive 2 Board](assets/visionfive2.png)
+<p align="center">
+    <img src="assets/visionfive2.png" alt="VisionFive 2 Board" style="width:80%;" />
+</p>
 
 ### Project Directory Structure
 
