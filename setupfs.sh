@@ -60,7 +60,9 @@ mkdir -p run
 # Write cleanup commands to run/cleanfs.sh
 cat > run/umountfs.sh <<EOF
 #!/bin/bash
-sudo umount $MOUNT_EFI
+if mount | grep -q "${LOOPDEV}p3"; then
+    sudo umount "${LOOPDEV}p3"
+fi
 sudo umount $MOUNT_ROOT
 sudo losetup -d $LOOPDEV
 EOF

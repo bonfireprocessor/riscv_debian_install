@@ -36,11 +36,17 @@ update-locale LANG=de_DE.UTF-8
 kernel_version=$(ls /lib/modules | sort -V | tail -n1)
 dtb_source="/usr/lib/linux-image-${kernel_version}/"
 dtb_target="/boot/dtbs"
-echo "Copying DTB files for kernel version: $kernel_version"
-rm -rf "$dtb_target"
-mkdir -p "$dtb_target"
-mkdir -p "$dtb_target"/"$kernel_version"
-cp -rv "${dtb_source}"/starfive  "$dtb_target"/"$kernel_version"
+if [ -d "$dtb_target/$kernel_version" ]; then
+    echo "DTB files for kernel version $kernel_version already exist, skipping copy."
+else
+    echo "DTB files for kernel version $kernel_version do not exist, copying..."
+    rm -rf "$dtb_target"
+    mkdir -p "$dtb_target"
+    mkdir -p "$dtb_target"/"$kernel_version"
+    cp -rv "${dtb_source}"/starfive  "$dtb_target"/"$kernel_version"
+fi
+
+
 
 # Because updating the U-Boot confiugration and the boot partition is not reliable currently, we disable automatic updates of the kernel.
 # This is a workaround until the issue is resolved. 
