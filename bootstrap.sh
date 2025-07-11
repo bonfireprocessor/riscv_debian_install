@@ -19,13 +19,11 @@ sudo chmod +x $MOUNT_ROOT/usr/local/bin/resize-rootfs.sh
 sudo cp -rv template/resize-rootfs.service $MOUNT_ROOT/etc/systemd/system
 sudo cp -rv template/99-cpufreq.rules $MOUNT_ROOT/etc/udev/rules.d
 sudo cp -rv template/u-boot $MOUNT_ROOT/etc/default
+sudo cp -v template/uEnv.txt $MOUNT_EFI/
+
 
 # Remount EFI Partition into the /boot directory to ensure that u-boot-update and Kernel Installation works correctly
-
-
 echo "Remounting EFI partition into /boot"
-#sudo cp -rv $MOUNT_ROOT/boot/* $MOUNT_EFI/
-sudo cp -v template/uEnv.txt $MOUNT_EFI/
 sudo umount $MOUNT_EFI
 sudo mount "${LOOPDEV}p3" $MOUNT_ROOT/boot
 
