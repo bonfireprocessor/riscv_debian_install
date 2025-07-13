@@ -139,10 +139,69 @@ starfive/
 ### Prepare
 The script  ``./prepare.sh`` contains just the install command to install all  depedencies which are required to run the other scripts. 
 
-### setupfs
+### Setup the Disk image and file system
 The script ``./setupfs.sh`` creates the SD-Card Image (currently hard-coded  size of 4GB) in run/sdcard.img with the four paritions as outlined above. It sets up a loop device and mount the boot and the root partition in the mnt sub directory.
 
 
-### bootstrap
+### Bootstrap Debian into the Disk Image
 ``./bootsrap.sh`` is the core installation script. It runs runs mmdebstrap on mnt/rootfs (the mount point of the root partition of the SD-Card image), copies some files from the template subdirectory to the right places on the root files system and in then runs the  script ``rsicv64_setup.sh`` inside a RISC-V container created with systemd-nspawn. 
 During the bootstrap process it remounts the boot partition form mnt/bootfs to mnt/rootfs/boot, which is the place where the /boot parition is later also mounted in the running Linux system. This ensures that the kernel image (which is installed during ``rsicv64_setup.sh``), the initrd, the device tree files and the U-Boot menu are created automatically in the correct place. It is especially important for the u-boot-update command, because it dynamically checks if /boot is a directory our an mount-point and changes its behaviour accordingly. 
+
+### Unmount and clean
+``run/umountfs` is a script created by ``setup.fs`` or ``remount.sh``do clean up, it will remove the mounts and the loop device. It is strongly advised to run this script before doing further steps with the image, like copying it to a real mediium or running it in QEMU.
+
+### Copy to a medium
+The image can be copied to an SD-Card, or alo eMMC or NVMe Flash devices. There are several possbilties to achieve this. In Linux often dd is the easiest way:
+```sh
+sudo dd if=run/sdcard.img of=/dev/sdX bs=4M status=progress conv=fsync
+```
+Replace `/dev/sdX` with the actual device name of your SD card (e.g., `/dev/sdb`). Double-check the device name to avoid overwriting the wrong disk.
+
+Many Linux Desktop enviroments automatically mount an SD Card when it is inserted, in this case you need to unmount it, e.g. with the eject button in the Desktop File manager. SD Cards can be mounted in several ways, so there is no one-and-only way.
+
+#### Hint for VM users
+When you run the Scripts in a Linux VM on e.g. Windows or macOS it can be difficult to mount the SD card in the VM. Usually USB based SD Card readers can be assigned to the VM in Desktop Hypervisors like VMWare or UTM (Mac), but on board PCIe based SD-Card readers cannot be assigned. In this case it is best to copy the image to the Host enviornment and use a Host OS tool like Balena Etcher.
+
+#### Hint for installing the Image to an NVMe SSD
+There are two easy possiblties to install the IMage to an NVMe SSD:
+
+* Use an USB NVMe Adapter
+    + Install the SSD  temporarly into an USB case, connect it to the Host system and copy the Image to it in the same way as described for SD Cards
+    + Remove the SSD from the USB case and install it into the VisionFive 2 board
+    + Startup the board with out an SD Card inserted. It should boot from the NVMe automatically.
+
+* Install to the NVMe natively on the VisionFive 2 (recommended)
+    + Boot the VisionFive 2 board from an SD Card (which is strongly advised for a first time anyway).
+    + Ensure that an already built-in SSD is detected with `lspci` and `lsblk` commands:
+    ```
+    thomas@starfive:~$ lspci -tv
+    -[0000:00]---00.0-[01]----00.0  VIA Technologies, Inc. VL805/806 xHCI USB 3.0 Controller
+    -[0001:00]---00.0-[01]----00.0  ADATA Technology Co., Ltd. XPG SX8200 Pro PCIe Gen3x4 M.2 2280 Solid State Drive
+    thomas@starfive:~$ lsblk
+    NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+    nvme0n1     259:0    0 476.9G  0 disk 
+    ├─nvme0n1p1 259:1    0     2M  0 part 
+    ├─nvme0n1p2 259:2    0     4M  0 part 
+    ├─nvme0n1p3 259:3    0   300M  0 part /boot
+    ├─nvme0n1p4 259:4    0   256G  0 part 
+    └─nvme0n1p5 259:5    0 117.2G  0 part /
+    thomas@starfive:~$ 
+    ```
+    + Copy the SD Image with e.g. FTP/SFTP/ etc. as file to the SD Card (when you have at least an 8GB SD Card there is enough space).
+    + Install the Image to the NVMe SSD with dd e.g:
+    ```sh
+    sudo dd if=run/sdcard.img of=/dev/nvme0n1 bs=4M status=progress conv=fsync
+    ```
+    + Shutdown the Board: ```sudo poweroff```
+    + Remove the SD Card
+    + Restart (power cycle or reset button )
+
+Of course you can also install the NVMe SSD temporarly on a free SSD slot of your PCs mainboard, but this is a lot of work when you want do it more than once. The "self hosted" method to just copy the image to the NVMe SSD natively on the VisionFive is very convenient.
+
+#### Stabilty of NVMe Disks on the VisionFive 2
+
+There has been reports in the Internet that NVMe Disks do not work stable on the VisionFive 2 and the problems seem to be related to the Power Supply. I'm using my VisionFive 2 with an older ADATA 8200XP 512GB SSD, and had no problems so far. Most people reoprting problems tried to use 5V power supplies only. But the VisionFive 2 supports USB-PD (Power Delivery) and automatically uses higher input voltages when the Power Supply offers them. I made very good experience with 20W USB-PD chargers from UGREEN and Apple (the charger from my iPad, but I think the brand doesn't matter), the Board negotiates 12V with my supply:
+
+<p align="center">
+    <img src="assets/vf_supply.png" alt="VisionFive 2 Board" style="width:50%;" />
+</p>
