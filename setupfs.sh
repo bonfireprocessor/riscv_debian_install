@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-mkdir -p mnt/bootfs mnt/rootfs
+mkdir -p mnt/bootfs mnt/rootfs run
 source "$(dirname "$0")/env.sh"
 
 # Sanity checks
@@ -55,8 +55,6 @@ echo "  - EFI partition mounted at: $MOUNT_EFI"
 echo "  - Root (ext4) partition mounted at: $MOUNT_ROOT"
 echo "  - Loop device in use: $LOOPDEV"
 
-# Create run directory if it doesn't exist
-mkdir -p run
 
 # Write cleanup commands to run/cleanfs.sh
 cat > run/umountfs.sh <<EOF
