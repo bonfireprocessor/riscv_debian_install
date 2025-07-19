@@ -2,6 +2,7 @@
 set -e
 
 source "$(dirname "$0")/env.sh"
+mkdir -p "$MOUNT_EFI" "$MOUNT_ROOT" 
 
 # Sanity checks
 
