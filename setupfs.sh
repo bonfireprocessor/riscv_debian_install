@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
+mkdir -p mnt/bootfs mnt/rootfs
 source "$(dirname "$0")/env.sh"
-mkdir -p "$MOUNT_EFI" "$MOUNT_ROOT" 
 
 # Sanity checks
 
