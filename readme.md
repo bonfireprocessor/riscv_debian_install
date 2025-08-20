@@ -6,8 +6,8 @@
 
 
 ## Abstract
-Debian Trixie supports most parts of the VisionFive 2 board with the standard riscv64 distribtuion kernel, but the Debian installer cannot be diretly used with the VisionFive2 board. It seems to work with some tweaking, but this Repository shows a different way:
-* It creates SD Image with the OS wich can be written to an SD card. It should work out-of-the-box with the the latest U-Boot Firmware of the VisionFive 2 board, at least with my board it was possible. If you have a board with an older Firmware there are instructions in the "VisionFive 2 Single Board Computer quick start guide" how to update the Firmware.
+Debian Trixie supports most parts of the VisionFive 2 board with the standard riscv64 distribtuion kernel, but the Debian installer cannot be directly used with the VisionFive2 board. It seems to work with some tweaking, but this Repository shows a different way:
+* It creates SD Image which can be written to an SD card. It should work out-of-the-box with the the latest U-Boot Firmware of the VisionFive 2 board, at least with my board it was possible. If you have a board with an older Firmware there are instructions in the "VisionFive 2 Single Board Computer quick start guide" how to update the Firmware.
 It is also possible to install U-Boot SPL and U-Boot Firmware on the partitions 0 and 1 of the SD card image and set the Dip Switches on the VisionFive 2 to SD Card boot. Than the VisionFive2 loads the matching Firmware from SD Card at every boot.
 
 * The SD Image can be written to a SD Card with at least 4GB size with either the DD command or specialized programs like Balena Etcher in Windows. It is recommended to use an SD Card with at least 8GB.
@@ -59,19 +59,19 @@ The project directory structure is as follows:
     └── uEnv.txt
 ```
 
-The dircetory run will contain the output artefacts, currently the created SD-Card image as sdcard.img, and a temporary scripts used during the process.
+The dircetory run will contain the output artefacts, currently the created SD-Card image as sdcard.img, and temporary scripts used during the process.
 
 In mnt there are mountpoints for the root and boot partition of the SD-Card image, they are mounted as Linux loop devices. 
 
 ### How it works
 The main building blocks for the Image creaion are 
 
- * A loop device to load mount the partitions on the SD-Card image like a real disk
+ * A loop device to mount the partitions on the SD-Card image like a real disk
  * The mmdebstrab Tool from Debian
- * QEMU User-Mode and  ELF interpreter to run RISC-V binaries transparently on an Intel/AMD/ARM Hostsystem
+ * QEMU User-Mode Emulator and  ELF interpreter to run RISC-V binaries transparently on an Intel/AMD/ARM Hostsystem
  * systemd-nspawn to run a chroot lightweigt container on the mounted SD-Card image
 
- The combaination of QEMU und systemd-nspwan creates an containrzed environment on the SD-Card Image which almost works as an RISC-V userland. 
+ The combaination of QEMU und systemd-nspwan creates an containerized environment on the SD-Card Image which almost works as an RISC-V userland. 
 
  In most cases mmdebstrap is used to create an Debian Userland in a subdirectory of the host filesystem. My scripts directly run on the mounted SD image, this saves the need to copy over everything later and also keeps the host system clean, everything resides only in the SD-card image.
 
@@ -120,8 +120,9 @@ The boot partition will be created with the following layout:
 └── vmlinux-6.12.35+deb13-riscv64
 ```
 
-The exact number of the kernel version deoends on the point-in-time when the script is run.
-The dtbs directories contain all the Device Tree Blobs for the different version of the supported RISC-V boards, the picture above only lists the dtb directories, they contain several files.
+The exact kernel version depends on the point-in-time where the script is run.
+The dtbs directories contain all the Device Tree Blobs for the supported RISC-V boards.
+The tree view above only lists the dtb directories, as an example the starfive directory contains following files:
 
 ```
 starfive/
@@ -137,7 +138,7 @@ starfive/
 ## Script Flow
 
 ### Prepare
-The script  ``./prepare.sh`` contains just the install command to install all  depedencies which are required to run the other scripts. 
+The script  ``./prepare.sh`` contains  the install command to install all depedencies which are required to run the other scripts. 
 
 ### Setup the Disk image and file system
 The script ``./setupfs.sh`` creates the SD-Card Image (currently hard-coded  size of 4GB) in run/sdcard.img with the four paritions as outlined above. It sets up a loop device and mount the boot and the root partition in the mnt sub directory.
@@ -145,7 +146,7 @@ The script ``./setupfs.sh`` creates the SD-Card Image (currently hard-coded  siz
 
 ### Bootstrap Debian into the Disk Image
 ``./bootsrap.sh`` is the core installation script. It runs runs mmdebstrap on mnt/rootfs (the mount point of the root partition of the SD-Card image), copies some files from the template subdirectory to the right places on the root files system and in then runs the  script ``rsicv64_setup.sh`` inside a RISC-V container created with systemd-nspawn. 
-During the bootstrap process it remounts the boot partition form mnt/bootfs to mnt/rootfs/boot, which is the place where the /boot parition is later also mounted in the running Linux system. This ensures that the kernel image (which is installed during ``rsicv64_setup.sh``), the initrd, the device tree files and the U-Boot menu are created automatically in the correct place. It is especially important for the u-boot-update command, because it dynamically checks if /boot is a directory our an mount-point and changes its behaviour accordingly. 
+During the bootstrap the boot partition is remounted form mnt/bootfs to mnt/rootfs/boot, which is the place where the /boot parition is later also mounted in the running Linux system. This ensures that the kernel image (which is installed during ``rsicv64_setup.sh``), the init ramdisk, the device tree files and the U-Boot menu are created automatically in the correct place. It is especially important for the u-boot-update command, because it dynamically checks if /boot is a directory our an mount-point and changes its behaviour accordingly. 
 
 During the bootstrap process you will be asked what to do with the file ``/etc/default/u-boot``:
 
@@ -184,7 +185,7 @@ Replace `/dev/sdX` with the actual device name of your SD card (e.g., `/dev/sdb`
 Many Linux Desktop enviroments automatically mount an SD Card when it is inserted, in this case you need to unmount it, e.g. with the eject button in the Desktop File manager. SD Cards can be mounted in several ways, so there is no one-and-only way.
 
 #### Hint for VM users
-When you run the Scripts in a Linux VM on e.g. Windows or macOS it can be difficult to mount the SD card in the VM. Usually USB based SD Card readers can be assigned to the VM in Desktop Hypervisors like VMWare or UTM (Mac), but on board PCIe based SD-Card readers cannot be assigned. In this case it is best to copy the image to the Host enviornment and use a Host OS tool like Balena Etcher.
+When you run the Scripts in a Linux VM on e.g. Windows or macOS it can be difficult to mount the SD card in the VM. Usually SD Card readers can be assigned to the VM in Desktop Hypervisors like VMWare or UTM (Mac), but on board PCIe based SD-Card readers cannot be assigned. In this case it is best to copy the image to the Host enviornment and use a Host OS tool like Balena Etcher.
 
 #### Hint for installing the Image to an NVMe SSD
 There are two easy possiblties to install the IMage to an NVMe SSD:
@@ -206,7 +207,8 @@ There are two easy possiblties to install the IMage to an NVMe SSD:
     nvme0n1     259:0    0 476.9G  0 disk 
     debian@starfive:~$ 
     ```
-    (A SSD with already partitions on it will show the paitition devices (nvne0n1pX) in lsblk)
+    (A non-empty SSD will show the partition device like nvne0n1pX in lsblk)
+
     + Copy the SD Image with e.g. FTP/SFTP/ etc. as file to the SD Card (when you have at least an 8GB SD Card there is enough space).
     + Install the Image to the NVMe SSD with dd e.g:
     ```sh
