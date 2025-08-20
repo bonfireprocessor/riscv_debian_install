@@ -147,6 +147,20 @@ The script ``./setupfs.sh`` creates the SD-Card Image (currently hard-coded  siz
 ``./bootsrap.sh`` is the core installation script. It runs runs mmdebstrap on mnt/rootfs (the mount point of the root partition of the SD-Card image), copies some files from the template subdirectory to the right places on the root files system and in then runs the  script ``rsicv64_setup.sh`` inside a RISC-V container created with systemd-nspawn. 
 During the bootstrap process it remounts the boot partition form mnt/bootfs to mnt/rootfs/boot, which is the place where the /boot parition is later also mounted in the running Linux system. This ensures that the kernel image (which is installed during ``rsicv64_setup.sh``), the initrd, the device tree files and the U-Boot menu are created automatically in the correct place. It is especially important for the u-boot-update command, because it dynamically checks if /boot is a directory our an mount-point and changes its behaviour accordingly. 
 
+During the bootstrap process you will be asked what to do with the file ``/etc/default/u-boot``:
+
+````
+Configuration file '/etc/default/u-boot'
+ ==> File on system created by you or by a script.
+ ==> File also in package provided by package maintainer.
+   What would you like to do about it ?  Your options are:
+    Y or I  : install the package maintainer's version
+    N or O  : keep your currently-installed version
+      D     : show the differences between the versions
+      Z     : start a shell to examine the situation
+````
+Please select 'N', because we want to keep the version copied to the filesystem upfront form the template directory. 
+
 #### Properties of the generatded image
 * Hostname is hard-coded to **starfive** (can be changed in ``riscv64_setup.sh``)
 * A user **debian** with password **debian** is created and added to the sudo group
