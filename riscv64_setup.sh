@@ -28,11 +28,14 @@ if ! id -u debian >/dev/null 2>&1; then
 fi
 
 apt install locales -y
+sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen
 sed -i 's/^# *de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
-update-locale LANG=de_DE.UTF-8
+update-locale LANG=en_US.UTF-8
 
 #Copy DTB files for StarFive
+#This is only a fallback mechanism,normally u-boot-update (executed when installalling 
+#linux-image-riscv64 and u-boot-menu) should copy the DTB files
 kernel_version=$(ls /lib/modules | sort -V | tail -n1)
 dtb_source="/usr/lib/linux-image-${kernel_version}/"
 dtb_target="/boot/dtbs"

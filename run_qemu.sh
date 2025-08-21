@@ -8,7 +8,6 @@ set -e
 set -u
 
 source "$(dirname "$0")/env.sh"
-ROOT_PARTITION="/dev/vda4"  # root partition in the disk image
 
 echo "Starting QEMU with disk image: $IMAGE"
 
